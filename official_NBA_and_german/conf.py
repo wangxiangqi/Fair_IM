@@ -39,5 +39,5 @@ lambda_ = 0.4
 gamma = 0.1
 dimension = 4
 seed_size = 10
-iterations = 70
-oracle = generalGreedy_n
+iterations = 50
+oracle = degreeDiscountIC_n

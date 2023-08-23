@@ -18,7 +18,7 @@ from BanditAlg.IMFB import MFAlgorithm
 from IC.IC import runIC, runICmodel, runICmodel_n
 from IC.runIAC  import weightedEp, runIAC, runIACmodel, randomEp, uniformEp
 import sys
-sys.path.append('E:/summer_intern/Hua_zheng_Wang/Fair_IM/IMFB-KDD2019-master/IMFB-KDD2019-master/fair_influmax_code')
+sys.path.append('./fair_influmax_code')
 from utils import greedy
 from icm import sample_live_icm, make_multilinear_objective_samples_group, make_multilinear_gradient_group
 from algorithms import algo, maxmin_algo, make_normalized, indicator
