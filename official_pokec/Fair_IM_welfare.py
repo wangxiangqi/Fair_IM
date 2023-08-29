@@ -23,7 +23,7 @@ from utils import greedy
 from icm import sample_live_icm, make_multilinear_objective_samples_group, make_multilinear_gradient_group
 from algorithms import algo, maxmin_algo, make_normalized, indicator
 
-alpha = 0.5
+alpha = 1.2
 
 
 def multi_to_set(f, n = None):
@@ -166,7 +166,7 @@ class simulateOnlineData:
             for alg_name, alg in list(algorithms.items()): 
                 S = alg.decide() 
                 reward, live_nodes, live_edges = runICmodel(G, S,self.TrueP)
-                #print(live_edges)
+                print("all nodes influenced", len(live_nodes))
                 for (u,v) in live_edges.keys():
                     #print(live_edges[(u,v)])
                     if G.has_edge(u,v)==False:
@@ -202,15 +202,15 @@ class simulateOnlineData:
             self.resultRecord(iter_)
         for alg_name, alg in list(algorithms.items()): 
             plt.plot(UCB1)
-            with open('UCB1_set_pokec_WEL_far.pkl', 'wb') as f:
+            with open('UCB1fair.pkl', 'wb') as f:
             # serialize and save set to file
                 pickle.dump(UCB1, f)
             plt.plot(IMFB)
-            with open('IMFB_set_pokec_WEL_fair.pkl', 'wb') as f:
+            with open('IMFBfair.pkl', 'wb') as f:
             # serialize and save set to file
                 pickle.dump(IMFB, f)
             plt.plot(e_gred)
-            with open('egred_set_pokec_WEL_fair.pkl', 'wb') as f:
+            with open('egredfair.pkl', 'wb') as f:
             # serialize and save set to file
                 pickle.dump(e_gred, f)
             #plt.plot(DILinUCB)
@@ -304,7 +304,7 @@ if __name__ == '__main__':
     #G.clear()
     #G.add_edges_from(transformed_edges)
     #print(G.edges())
-    print(type(G))
+    #print(type(G))
     #print(G[127])
     #print(G.has_edge(127,1356))
     #print(G.edges())
@@ -377,6 +377,7 @@ if __name__ == '__main__':
         v=line[1]
         #if u==127:
         #    print(v)
+        print(prob[(u,v)])
         P.add_edge(u, v, weight=0.5)
         G[u][v]['weight']=0.5
         #G[u][v]['p']=0.1

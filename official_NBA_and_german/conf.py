@@ -4,23 +4,23 @@ from Oracle.degreeDiscount import degreeDiscountIC, degreeDiscountIC2, degreeDis
 from Oracle.Fair_Oracle import Fair_IM_oracle,Fair_IM_oracle_wel, optimal_gred
 save_address = "./SimulationResults"
 
-#graph_address = './datasets/NBA/nba_relationship.G'
-#prob_address = './datasets/NBA/prob.dic'
-#param_address = './datasets/NBA/parameter.dic'
-#edge_feature_address = './datasets/NBA/edge_feature.dic'
+graph_address = './datasets/NBA/nba_relationship.G'
+prob_address = './datasets/NBA/prob.dic'
+param_address = './datasets/NBA/parameter.dic'
+edge_feature_address = './datasets/NBA/edge_feature.dic'
 ## For simulation on Fair IM, we need to choose a different dataset which includes class information
 # Choose the third column of edge feature as class feature
-#class_feature_address = './datasets/NBA/country.dic'
-#dataset = 'NBA' #Choose from 'default', 'NetHEPT', 'Flickr'
+class_feature_address = './datasets/NBA/country.dic'
+dataset = 'NBA' #Choose from 'default', 'NetHEPT', 'Flickr'
 
-graph_address = './datasets/german/german_relationship.G'
-prob_address = './datasets/german/german_prob.dic'
-param_address = './datasets/german/parameter.dic'
-edge_feature_address = './datasets/german/edge_feature.dic'
+#graph_address = './datasets/german/german_relationship.G'
+#prob_address = './datasets/german/german_prob.dic'
+#param_address = './datasets/german/parameter.dic'
+#edge_feature_address = './datasets/german/edge_feature.dic'
 ## For simulation on Fair IM, we need to choose a different dataset which includes class information
 # Choose the third column of edge feature as class feature
-class_feature_address = './datasets/german/Age.dic'
-dataset = 'german' #Choose from 'default', 'NetHEPT', 'Flickr'
+#class_feature_address = './datasets/german/Age.dic'
+#dataset = 'german' #Choose from 'default', 'NetHEPT', 'Flickr'
 
 #graph_address = './datasets/pokec/pokec_relationship.G'
 #prob_address = './datasets/pokec/prob.dic'
@@ -38,6 +38,6 @@ alpha_2 = 0.1
 lambda_ = 0.4
 gamma = 0.1
 dimension = 4
-seed_size = 10
-iterations = 50
-oracle = degreeDiscountIC_n
+seed_size = 15
+iterations = 100
+oracle = Fair_IM_oracle_wel

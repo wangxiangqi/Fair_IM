@@ -2,11 +2,49 @@ import numpy as np
 import sys
 sys.path.append('./fair_influmax_code')
 sys.path.append('./Oracle')
-from degreeDiscount import degreeDiscountIC, degreeDiscountIC2, degreeDiscountIAC, degreeDiscountIAC2, degreeDiscountStar, degreeDiscountIAC3
+#sys.path.append('E:/summer_intern/official_pokec/IC')
+from degreeDiscount import degreeDiscountIC, degreeDiscountIC2, degreeDiscountIAC, degreeDiscountIAC2, degreeDiscountStar, degreeDiscountIAC3, degreeDiscountIC_n
 from generalGreedy import generalGreedy
 from utils import greedy
 from icm import sample_live_icm, make_multilinear_objective_samples_group, make_multilinear_gradient_group
 from algorithms import algo, maxmin_algo, make_normalized, indicator, make_welfare
+
+
+def runIC (G, S, p = .01):
+    ''' Runs independent cascade model.
+    Input: G -- networkx graph object
+    S -- initial set of vertices
+    p -- propagation probability
+    Output: T -- resulted influenced set of vertices (including S)
+    '''
+    from copy import deepcopy
+    from random import random
+    T = deepcopy(S) # copy already selected nodes
+    E = {}
+
+    # ugly C++ version
+    i = 0
+    while i < len(T):
+        for v in G[T[i]]: # for neighbors of a selected node
+            if v not in T: # if it wasn't selected yet
+                w = G[T[i]][v]['weight'] # count the number of edges between two nodes
+                if random() <= 1 - (1-p)**w: # if at least one of edges propagate influence
+                    # print T[i], 'influences', v
+                    T.append(v)
+                    E[(T[i], v)] = 1
+        i += 1
+
+    # neat pythonic version
+    # legitimate version with dynamically changing list: http://stackoverflow.com/a/15725492/2069858
+    # for u in T: # T may increase size during iterations
+    #     for v in G[u]: # check whether new node v is influenced by chosen node u
+    #         w = G[u][v]['weight']
+    #         if v not in T and random() < 1 - (1-p)**w:
+    #             T.append(v)
+    for (u,v) in E.keys():
+        if G.has_edge(u,v)==False:
+            raise ValueError("propagation error")
+    return len(T), T, E
 
 group_size = {}
 def Fair_IM_oracle(G,K,attributes,P=0.1):
@@ -165,7 +203,7 @@ def Fair_IM_oracle(G,K,attributes,P=0.1):
     return set_to_fair
 
 group_size = {}
-def Fair_IM_oracle_wel(G,K,attributes,P=0.1,alpha=0.5):
+def Fair_IM_oracle_wel(G,K,attributes,P=0.1,alpha=1.2):
     for attribute in attributes:
         nvalues = len(np.unique([G.node[v]['node_type'][attribute] for v in G.nodes()]))
         group_size[attribute] = np.zeros((1, nvalues))
@@ -209,8 +247,13 @@ def Fair_IM_oracle_wel(G,K,attributes,P=0.1,alpha=0.5):
             return f(x, 10)[i]
         return f_single
     #print("about to run greedy")
-    S_opop, obj = greedy(list(range(len(G))), K, f_set)
+    #S_opop, obj = greedy(list(range(len(G))), K, f_set)
+    #This is the optimal S_opop in degreediscount as optimal case:\
+    print("ready to find optimal")
+    a=["key3"]
+    S_opop= degreeDiscountIC_n(G, K, a)
     print("S_opop is",S_opop)
+    #print("S_opop is",S_opop)
     #print("successfully output S_opop")
     set_to_fair=[]
     for attr_idx, attribute in enumerate(attributes):
@@ -244,7 +287,8 @@ def Fair_IM_oracle_wel(G,K,attributes,P=0.1,alpha=0.5):
         print(len(values))
         for val in values:
             #S_attr=generalGreedy(G,K,0.1)
-            S_attr[val], opt_attr[val] = greedy(list(range(len(G))), int(len(nodes_attr[val])/len(G) * K), f_attr[val])
+            S_attr[val]= degreeDiscountIC_n(G, int(len(nodes_attr[val])/len(G) * K), a)
+            opt_attr[val],_,_ = runIC(G,S_attr[val])
 
         all_opt = np.array([opt_attr[val] for val in values])
 
@@ -259,13 +303,15 @@ def Fair_IM_oracle_wel(G,K,attributes,P=0.1,alpha=0.5):
         #val_oracle_welfare = make_welfare(val_oracle, group_size[attribute][0])
         grad_oracle=make_welfare(grad_oracle, group_size[attribute][0], alpha)
         grad_oracle=make_welfare(grad_oracle,group_size[attribute][0], alpha)
-        wel_x = algo(grad_oracle, val_oracle, threshold, K, group_indicator, np.array(targets), 5, solver)[1:]
+        wel_x = algo(grad_oracle, val_oracle, threshold, K, group_indicator, np.array(targets), 3, solver)[1:]
         wel_x = wel_x.mean(axis=0)
-        for sublist in wel_x:
+        wel_fair=val_oracle(wel_x,20)
+        #print(len(wel_x))
+        for m in wel_fair:
             #print(val_oracle(sublist, 400).mean())
         #    #m= val_oracle(sublist, 20).mean()
         #    #print(m)
-            m=val_oracle(sublist,20).mean()
+            #m=val_oracle(sublist,20).mean()
             if isinstance(m, float) and 0 <= m and m<len(G.nodes()):
                 set_to_fair.append(int(m))
 

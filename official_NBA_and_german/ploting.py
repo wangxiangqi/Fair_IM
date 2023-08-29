@@ -4,7 +4,7 @@ import glob
 
 # Get a list of all .npy files in the current directory
 import pickle
-files = glob.glob('./ploting_npy_maxmin/*.pkl')
+files = glob.glob('./1.2_german_wel/*.pkl')
 
 # Create a new figure
 plt.figure()

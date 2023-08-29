@@ -27,7 +27,9 @@ with open('german_relationship.G', 'wb') as f:
 # Calculate the probability of each edge
 prob_dict = {}
 for source, target in graph.edges():
-    probability = graph[source][target]['weight'] / sum(graph[source][neighbor]['weight'] for neighbor in graph.successors(source))
+    #print(graph[source])
+    #print(len(graph[source]))
+    probability = graph[source][target]['weight'] / sum(graph[source][neighbor]['weight'] for neighbor in graph[source])
     #print(f"The probability of edge ({source}, {target}) is {probability}")
     prob_dict[(source, target)] = probability
 

@@ -23,7 +23,7 @@ from utils import greedy
 from icm import sample_live_icm, make_multilinear_objective_samples_group, make_multilinear_gradient_group
 from algorithms import algo, maxmin_algo, make_normalized, indicator
 
-alpha = 0.5
+alpha = 1.2
 
 
 def multi_to_set(f, n = None):
@@ -149,21 +149,23 @@ class simulateOnlineData:
         e_gred=[]
         #DILinUCB=[]
         optimal_reward, live_nodes, live_edges = runICmodel(G, optS,self.TrueP)
-        #optimal_reward=Get_reward_wel(G,self.attributes,self.seed_size,live_nodes,live_edges)
+        print(len(list(live_nodes)))
+        optimal_reward=Get_reward_wel(G,self.attributes,self.seed_size,live_nodes,live_edges)
         #total_optimal=self.iterations*optimal_reward
         total_influence_UCB=[]
         total_influence_IMFB=[]
         total_influence_egred=[]
         for iter_ in range(self.iterations):
             optimal_reward, live_nodes, live_edges = runICmodel(G, optS,self.TrueP)
-            #optimal_reward=Get_reward_wel(G,self.attributes,self.seed_size,live_nodes,live_edges)
+            optimal_reward=Get_reward_wel(G,self.attributes,self.seed_size,live_nodes,live_edges)
             self.result_oracle.append(optimal_reward)
             print('oracle', optimal_reward)
             
             for alg_name, alg in list(algorithms.items()): 
                 S = alg.decide() 
                 reward, live_nodes, live_edges = runICmodel(G, S,self.TrueP)
-                #reward=Get_reward_wel(G,self.attributes,self.seed_size,live_nodes,live_edges)
+                print("length of live nodes",len(list(live_nodes)))
+                reward=Get_reward_wel(G,self.attributes,self.seed_size,live_nodes,live_edges)
                 print("reward gap",optimal_reward-reward)
                 if iter_==0 and ('{}'.format(alg_name))=='UCB1':
                     UCB1.append(optimal_reward-reward)
@@ -193,15 +195,15 @@ class simulateOnlineData:
             self.resultRecord(iter_)
         for alg_name, alg in list(algorithms.items()): 
             plt.plot(UCB1)
-            with open('UCB1_set_german_wel_fair_alph_0.5.pkl', 'wb') as f:
+            with open('CUCBgermanfair.pkl', 'wb') as f:
             # serialize and save set to file
                 pickle.dump(UCB1, f)
             plt.plot(IMFB)
-            with open('IMFB_set_german_wel_fair_alpha_0.5.pkl', 'wb') as f:
+            with open('IMFBgermanfair.pkl', 'wb') as f:
             # serialize and save set to file
                 pickle.dump(IMFB, f)
             plt.plot(e_gred)
-            with open('egred_set_german_wel_fair_alpha_0.5.pkl', 'wb') as f:
+            with open('egredgermanfair.pkl', 'wb') as f:
             # serialize and save set to file
                 pickle.dump(e_gred, f)
             #plt.plot(DILinUCB)
@@ -341,16 +343,17 @@ if __name__ == '__main__':
         #print(key[1])
         #if key[0] and key[1] in mapping.keys():
         prob_1[(mapping[key[0]],mapping[key[1]])]=value
+        print("value is",value)
     prob=prob_1
-    attributes=["key3"]
+    attributes=["key5"]
     P = nx.DiGraph()
     #print(G.edges())
     #print([997,974] in G.edges())
     #对于Fair Oracle在graph里面要加入node_type成分。
     for (u,v) in G.edges():
         #print(u,v)
-        P.add_edge(u, v, weight=0.1)
-        G[u][v]['weight']=0.1
+        P.add_edge(u, v, weight=0.3)
+        G[u][v]['weight']=0.3
         #G[u][v]['p']=0.1
     print('nodes:', len(G.nodes()))
     print('edges:', len(G.edges()))

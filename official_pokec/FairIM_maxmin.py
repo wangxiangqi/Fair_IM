@@ -159,6 +159,7 @@ class simulateOnlineData:
         total_influence_egred=[]
         for iter_ in range(self.iterations):
             optimal_reward, live_nodes, live_edges = runICmodel(G, optS,self.TrueP)
+            print("live_nodes",len(live_nodes))
             optimal_reward=Get_reward(G,self.attributes,self.seed_size,live_nodes,live_edges)
             self.result_oracle.append(optimal_reward)
             print('oracle', optimal_reward)
@@ -202,15 +203,15 @@ class simulateOnlineData:
             self.resultRecord(iter_)
         for alg_name, alg in list(algorithms.items()): 
             plt.plot(UCB1)
-            with open('UCB1_set_pokec_maxmin_discount.pkl', 'wb') as f:
+            with open('UCB1_set_pokec_maxmin_fair.pkl', 'wb') as f:
             # serialize and save set to file
                 pickle.dump(UCB1, f)
             plt.plot(IMFB)
-            with open('IMFB_set_pokec_maxmin_discount.pkl', 'wb') as f:
+            with open('IMFB_set_pokec_maxmin_fair.pkl', 'wb') as f:
             # serialize and save set to file
                 pickle.dump(IMFB, f)
             plt.plot(e_gred)
-            with open('egred_set_pokec_maxmin_discount.pkl', 'wb') as f:
+            with open('egred_set_pokec_maxmin_fair.pkl', 'wb') as f:
             # serialize and save set to file
                 pickle.dump(e_gred, f)
             #plt.plot(DILinUCB)

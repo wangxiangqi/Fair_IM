@@ -159,6 +159,7 @@ class simulateOnlineData:
         total_influence_egred=[]
         for iter_ in range(self.iterations):
             optimal_reward, live_nodes, live_edges = runICmodel(G, optS,self.TrueP)
+            print("live nodes",len(live_nodes))
             optimal_reward=Get_reward(G,self.attributes,self.seed_size,live_nodes,live_edges)
             self.result_oracle.append(optimal_reward)
             print('oracle', optimal_reward)

@@ -135,7 +135,7 @@ def Fair_IM_oracle(G,K,attributes,P=0.1):
         all_opt = np.array([opt_attr[val] for val in values])
 
         solver="md"
-        threshold = 160
+        threshold = 1.6
         targets = [opt_attr[val] for val in values]
         #print("S_att is",S_attr)
         targets = np.array(targets)
@@ -145,22 +145,24 @@ def Fair_IM_oracle(G,K,attributes,P=0.1):
         #set_to_fair=[0, 126, 3092, 5978]
         
         #The first one is on diversity constraint
+        """
         fair_x = algo(grad_oracle, val_oracle, threshold, K, group_indicator, np.array(targets), 2, solver)[1:]
         #print("fair_x output")
         #print(fair_x)
         
         fair_x = fair_x.mean(axis=0)
-        for sublist in fair_x:
-            m=val_oracle(sublist,20).mean()
+        fair_val=val_oracle(fair_x,20)
+        for m in fair_val:
+            # m=val_oracle(sublist,20).mean()
             if isinstance(m,float) and 0<=m and m<len(G.nodes()):
                 set_to_fair.append(int(m))
-        fair_vals=val_oracle(fair_x,20)
-        for m in fair_vals:
+        #fair_vals=val_oracle(fair_x,20)
+        #for m in fair_vals:
         #    #print(val_oracle(sublist, 400).mean())
         #    #m= val_oracle(sublist, 20).mean()
         #    #print(m)
-            if isinstance(m, float) and 0 <= m and m<len(G.nodes()):
-                set_to_fair.append(int(m))
+        #    if isinstance(m, float) and 0 <= m and m<len(G.nodes()):
+        #        set_to_fair.append(int(m))
 
         
         # The second is on the maximin constraint
@@ -171,16 +173,16 @@ def Fair_IM_oracle(G,K,attributes,P=0.1):
         val_oracle_normalized = make_normalized(val_oracle, group_size[attribute][0])
         minmax_x = maxmin_algo(grad_oracle_normalized, val_oracle_normalized, threshold, K, group_indicator, 10, 5, 0.1, solver)
         minmax_x = minmax_x.mean(axis=0)
-        #fair_vals=val_oracle(minmax_x,20)
-        for sublist in minmax_x:
+        fair_vals=val_oracle(minmax_x,20)
+        for m in fair_vals:
             #print(val_oracle(sublist, 400).mean())
         #    #m= val_oracle(sublist, 20).mean()
         #    #print(m)
-            m=val_oracle(sublist,20).mean()
+            #m=val_oracle(sublist,20).mean()
             if isinstance(m, float) and 0 <= m and m<len(G.nodes()):
                 set_to_fair.append(int(m))
         
-        
+        """
         
         #for sublist in minmax_x:
         #    m=val_oracle(sublist,20).mean()
@@ -209,7 +211,7 @@ def Fair_IM_oracle(G,K,attributes,P=0.1):
     return set_to_fair
 
 group_size = {}
-def Fair_IM_oracle_wel(G,K,attributes,P=0.1,alpha=0.5):
+def Fair_IM_oracle_wel(G,K,attributes,P=0.1,alpha=1.2):
     for attribute in attributes:
         nvalues = len(np.unique([G.node[v]['node_type'][attribute] for v in G.nodes()]))
         group_size[attribute] = np.zeros((1, nvalues))
@@ -307,14 +309,15 @@ def Fair_IM_oracle_wel(G,K,attributes,P=0.1,alpha=0.5):
         grad_oracle=make_welfare(grad_oracle, group_size[attribute][0], alpha)
         grad_oracle=make_welfare(grad_oracle,group_size[attribute][0], alpha)
         
-        Over here we try to shorten the algo welfare process
+        #Over here we try to shorten the algo welfare process
         wel_x = algo(grad_oracle, val_oracle, threshold, K, group_indicator, np.array(targets), 3, solver)[1:]
         wel_x = wel_x.mean(axis=0)
-        for sublist in wel_x:
+        wel_fair=val_oracle(wel_x, 20)
+        for m in wel_fair:
             #print(val_oracle(sublist, 400).mean())
         #    #m= val_oracle(sublist, 20).mean()
         #    #print(m)
-            m=val_oracle(sublist,20).mean()
+            #m=val_oracle(sublist,20).mean()
             if isinstance(m, float) and 0 <= m and m<len(G.nodes()):
                 set_to_fair.append(int(m))
         
@@ -332,7 +335,7 @@ def Fair_IM_oracle_wel(G,K,attributes,P=0.1,alpha=0.5):
     return set_to_fair
 
 group_size = {}
-def optimal_gred(G,K,attributes,P=0.1,alpha=0.5):
+def optimal_gred(G,K,attributes,P=0.1,alpha=1.5):
     for attribute in attributes:
         nvalues = len(np.unique([G.node[v]['node_type'][attribute] for v in G.nodes()]))
         group_size[attribute] = np.zeros((1, nvalues))
