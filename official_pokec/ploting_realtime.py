@@ -13,9 +13,12 @@ plt.figure()
 for file in files:
     data = pickle.load(open(file, 'rb'), encoding='latin1')
     data=list(data)
+    data_1=[data[0]]
+    for i in range(len(data)-1):
+        data_1.append(data[i+1]-data[i])
     #if np.array(data).shape[0]>1:
     #    data=np.array(data)[:,0]
-    plt.plot(data, label=file)
+    plt.plot(data_1, label=file)
 
 # Add a legend and show the plot
 plt.legend()

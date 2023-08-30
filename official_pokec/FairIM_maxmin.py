@@ -23,7 +23,7 @@ from utils import greedy
 from icm import sample_live_icm, make_multilinear_objective_samples_group, make_multilinear_gradient_group
 from algorithms import algo, maxmin_algo, make_normalized, indicator
 
-alpha=0.5
+alpha=1.2
 
 
 def multi_to_set(f, n = None):

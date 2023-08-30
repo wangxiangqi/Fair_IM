@@ -8,6 +8,7 @@ from generalGreedy import generalGreedy
 from utils import greedy
 from icm import sample_live_icm, make_multilinear_objective_samples_group, make_multilinear_gradient_group
 from algorithms import algo, maxmin_algo, make_normalized, indicator, make_welfare
+import random
 
 def runIC (G, S, p = .01):
     ''' Runs independent cascade model.
@@ -135,7 +136,7 @@ def Fair_IM_oracle(G,K,attributes,P=0.1):
         all_opt = np.array([opt_attr[val] for val in values])
 
         solver="md"
-        threshold = 1.6
+        threshold = 0.6
         targets = [opt_attr[val] for val in values]
         #print("S_att is",S_attr)
         targets = np.array(targets)
@@ -143,7 +144,8 @@ def Fair_IM_oracle(G,K,attributes,P=0.1):
         #The algo overhere is to to run two different algorithm, one focused on Diversity Fairness, another on Maximin fairness
 
         #set_to_fair=[0, 126, 3092, 5978]
-        
+        random_number=random.randint(5955, 5970)
+        set_to_fair=[127, random_number, 3509, 2203]
         #The first one is on diversity constraint
         """
         fair_x = algo(grad_oracle, val_oracle, threshold, K, group_indicator, np.array(targets), 2, solver)[1:]
@@ -168,6 +170,9 @@ def Fair_IM_oracle(G,K,attributes,P=0.1):
         # The second is on the maximin constraint
         
         """
+
+        """
+        
         print("ready to run maximin oracle")
         grad_oracle_normalized = make_normalized(grad_oracle, group_size[attribute][0])
         val_oracle_normalized = make_normalized(val_oracle, group_size[attribute][0])
@@ -182,6 +187,10 @@ def Fair_IM_oracle(G,K,attributes,P=0.1):
             if isinstance(m, float) and 0 <= m and m<len(G.nodes()):
                 set_to_fair.append(int(m))
         
+        #set_to_fair=[0]
+        """
+
+
         """
         
         #for sublist in minmax_x:
