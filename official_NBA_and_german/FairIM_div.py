@@ -348,8 +348,8 @@ if __name__ == '__main__':
     #对于Fair Oracle在graph里面要加入node_type成分。
     for (u,v) in G.edges():
         #print(u,v)
-        P.add_edge(u, v, weight=0.5)
-        G[u][v]['weight']=0.5
+        P.add_edge(u, v, weight=0.3)
+        G[u][v]['weight']=0.3
         #G[u][v]['p']=0.1
     print('nodes:', len(G.nodes()))
     print('edges:', len(G.edges()))
